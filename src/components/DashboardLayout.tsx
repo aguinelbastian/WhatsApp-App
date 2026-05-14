@@ -32,20 +32,14 @@ export default function DashboardLayout() {
     return <Navigate to="/app" replace />
   }
 
-  if (isOnboardingRoute) {
-    return (
-      <div className="min-h-screen bg-background w-full overflow-y-auto animate-fade-in flex items-center justify-center p-4">
-        <Outlet />
-      </div>
-    )
-  }
-
   return (
     <div className="flex h-screen overflow-hidden bg-background w-full">
       <Sidebar />
       <div className="flex flex-col flex-1 relative w-full max-w-full">
         <Header />
-        <main className="flex-1 overflow-y-auto w-full pb-20 md:pb-0 animate-in fade-in duration-500 ease-apple">
+        <main
+          className={`flex-1 overflow-y-auto w-full pb-20 md:pb-0 animate-in fade-in duration-500 ease-apple ${isOnboardingRoute ? 'flex items-center justify-center p-4' : ''}`}
+        >
           <Outlet />
         </main>
         <BottomNav />

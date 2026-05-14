@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useIntegration } from '@/hooks/use-integration'
+import { useAuth } from '@/hooks/use-auth'
 import { useLanguage } from '@/hooks/use-language'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
@@ -10,6 +11,7 @@ import { useNavigate } from 'react-router-dom'
 
 export default function Onboarding() {
   const { integration, setIntegration } = useIntegration()
+  const { user } = useAuth()
   const { t } = useLanguage()
   const navigate = useNavigate()
 
@@ -32,16 +34,52 @@ export default function Onboarding() {
     let interval: NodeJS.Timeout
     if (step === 1 && integration?.status !== 'CONNECTED') {
       const fetchQR = async () => {
-        if (!integration?.id) return
+        let currentIntegrationId = integration?.id
+
+        if (!currentIntegrationId && user?.id) {
+          try {
+            const { data: newInteg, error } = await supabase
+              .from('user_integrations')
+              .insert({
+                user_id: user.id,
+                is_setup_completed: false,
+                status: 'DISCONNECTED',
+              })
+              .select()
+              .single()
+
+            if (newInteg) {
+              setIntegration(newInteg)
+              currentIntegrationId = newInteg.id
+            } else if (error && error.code === '23505') {
+              // Unique violation, means it was just created
+              const { data: existingInteg } = await supabase
+                .from('user_integrations')
+                .select()
+                .eq('user_id', user.id)
+                .single()
+
+              if (existingInteg) {
+                setIntegration(existingInteg)
+                currentIntegrationId = existingInteg.id
+              }
+            } else {
+              return
+            }
+          } catch (e) {
+            return
+          }
+        }
+
+        if (!currentIntegrationId) return
+
         try {
           const { data } = await supabase.functions.invoke('evolution-get-qr', {
-            body: { integrationId: integration.id },
+            body: { integrationId: currentIntegrationId },
           })
           if (data?.base64) {
             setQrCode(data.base64)
-            if (integration.status !== 'WAITING_QR') {
-              setIntegration((prev: any) => (prev ? { ...prev, status: 'WAITING_QR' } : null))
-            }
+            setIntegration((prev: any) => (prev ? { ...prev, status: 'WAITING_QR' } : null))
           }
           if (data?.connected) {
             setIntegration((prev: any) => (prev ? { ...prev, status: 'CONNECTED' } : null))
@@ -59,7 +97,7 @@ export default function Onboarding() {
     return () => {
       if (interval) clearInterval(interval)
     }
-  }, [step, integration?.id, integration?.status, setIntegration])
+  }, [step, integration?.id, integration?.status, setIntegration, user?.id])
 
   useEffect(() => {
     if (step === 2 && !syncStarted.current) {
