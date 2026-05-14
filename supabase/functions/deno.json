@@ -1,15 +1,15 @@
 {
   "_versions": {
-    "update-agendamento": 6,
-    "calcular-repasse-aula": 4,
-    "ai-classify-contacts": 2,
-    "ai-pipeline-monitor": 2,
-    "evolution-create-instance": 3,
-    "evolution-disconnect": 2,
-    "evolution-get-qr": 3,
-    "evolution-send-message": 2,
-    "evolution-sync-contacts": 2,
-    "evolution-sync-messages": 2,
-    "evolution-webhook": 1
+    "update-agendamento": 10,
+    "calcular-repasse-aula": 8,
+    "ai-classify-contacts": 7,
+    "ai-pipeline-monitor": 7,
+    "evolution-create-instance": 8,
+    "evolution-disconnect": 7,
+    "evolution-get-qr": 8,
+    "evolution-send-message": 7,
+    "evolution-sync-contacts": 7,
+    "evolution-sync-messages": 7,
+    "evolution-webhook": 6
   }
 }
