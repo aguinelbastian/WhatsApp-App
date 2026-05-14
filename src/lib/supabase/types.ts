@@ -188,6 +188,42 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_agents: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          gemini_api_key: string
+          id: string
+          is_active: boolean | null
+          name: string
+          system_prompt: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          gemini_api_key: string
+          id?: string
+          is_active?: boolean | null
+          name: string
+          system_prompt: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          gemini_api_key?: string
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          system_prompt?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       audit_log: {
         Row: {
           acao: string
@@ -303,6 +339,47 @@ export type Database = {
             columns: ['contrato_id']
             isOneToOne: false
             referencedRelation: 'contratos_cliente'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      contact_identity: {
+        Row: {
+          canonical_phone: string | null
+          created_at: string | null
+          display_name: string | null
+          id: string
+          instance_id: string
+          lid_jid: string | null
+          phone_jid: string | null
+          user_id: string
+        }
+        Insert: {
+          canonical_phone?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          instance_id: string
+          lid_jid?: string | null
+          phone_jid?: string | null
+          user_id: string
+        }
+        Update: {
+          canonical_phone?: string | null
+          created_at?: string | null
+          display_name?: string | null
+          id?: string
+          instance_id?: string
+          lid_jid?: string | null
+          phone_jid?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'contact_identity_instance_id_fkey'
+            columns: ['instance_id']
+            isOneToOne: false
+            referencedRelation: 'user_integrations'
             referencedColumns: ['id']
           },
         ]
@@ -444,6 +521,39 @@ export type Database = {
             referencedColumns: ['id']
           },
         ]
+      }
+      import_jobs: {
+        Row: {
+          created_at: string | null
+          id: string
+          processed_items: number | null
+          status: string | null
+          total_items: number | null
+          type: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          processed_items?: number | null
+          status?: string | null
+          total_items?: number | null
+          type: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          processed_items?: number | null
+          status?: string | null
+          total_items?: number | null
+          type?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
       }
       pacotes: {
         Row: {
@@ -1016,6 +1126,45 @@ export type Database = {
         }
         Relationships: []
       }
+      user_integrations: {
+        Row: {
+          created_at: string | null
+          evolution_api_key: string | null
+          evolution_api_url: string | null
+          id: string
+          instance_name: string | null
+          is_setup_completed: boolean
+          is_webhook_enabled: boolean
+          status: string | null
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          evolution_api_key?: string | null
+          evolution_api_url?: string | null
+          id?: string
+          instance_name?: string | null
+          is_setup_completed?: boolean
+          is_webhook_enabled?: boolean
+          status?: string | null
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          evolution_api_key?: string | null
+          evolution_api_url?: string | null
+          id?: string
+          instance_name?: string | null
+          is_setup_completed?: boolean
+          is_webhook_enabled?: boolean
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       usuarios: {
         Row: {
           avatar_url: string | null
@@ -1045,6 +1194,109 @@ export type Database = {
           status?: string | null
         }
         Relationships: []
+      }
+      whatsapp_contacts: {
+        Row: {
+          ai_agent_id: string | null
+          ai_analysis_summary: string | null
+          classification: string | null
+          created_at: string | null
+          id: string
+          last_message_at: string | null
+          phone_number: string | null
+          pipeline_stage: string | null
+          profile_picture_url: string | null
+          push_name: string | null
+          remote_jid: string
+          score: number | null
+          user_id: string
+        }
+        Insert: {
+          ai_agent_id?: string | null
+          ai_analysis_summary?: string | null
+          classification?: string | null
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          phone_number?: string | null
+          pipeline_stage?: string | null
+          profile_picture_url?: string | null
+          push_name?: string | null
+          remote_jid: string
+          score?: number | null
+          user_id: string
+        }
+        Update: {
+          ai_agent_id?: string | null
+          ai_analysis_summary?: string | null
+          classification?: string | null
+          created_at?: string | null
+          id?: string
+          last_message_at?: string | null
+          phone_number?: string | null
+          pipeline_stage?: string | null
+          profile_picture_url?: string | null
+          push_name?: string | null
+          remote_jid?: string
+          score?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'whatsapp_contacts_ai_agent_id_fkey'
+            columns: ['ai_agent_id']
+            isOneToOne: false
+            referencedRelation: 'ai_agents'
+            referencedColumns: ['id']
+          },
+        ]
+      }
+      whatsapp_messages: {
+        Row: {
+          contact_id: string | null
+          created_at: string | null
+          from_me: boolean | null
+          id: string
+          message_id: string
+          raw: Json | null
+          text: string | null
+          timestamp: string | null
+          type: string | null
+          user_id: string
+        }
+        Insert: {
+          contact_id?: string | null
+          created_at?: string | null
+          from_me?: boolean | null
+          id?: string
+          message_id: string
+          raw?: Json | null
+          text?: string | null
+          timestamp?: string | null
+          type?: string | null
+          user_id: string
+        }
+        Update: {
+          contact_id?: string | null
+          created_at?: string | null
+          from_me?: boolean | null
+          id?: string
+          message_id?: string
+          raw?: Json | null
+          text?: string | null
+          timestamp?: string | null
+          type?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: 'whatsapp_messages_contact_id_fkey'
+            columns: ['contact_id']
+            isOneToOne: false
+            referencedRelation: 'whatsapp_contacts'
+            referencedColumns: ['id']
+          },
+        ]
       }
     }
     Views: {
@@ -1104,6 +1356,14 @@ export type Database = {
         Returns: string
       }
       delete_user: { Args: { p_user_id: string }; Returns: undefined }
+      merge_whatsapp_contacts: {
+        Args: {
+          p_primary_contact_id: string
+          p_secondary_contact_ids: string[]
+          p_user_id: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
@@ -1282,6 +1542,16 @@ export const Constants = {
 //   is_active: boolean (not null, default: true)
 //   notes: text (nullable)
 //   created_at: timestamp without time zone (not null, default: now())
+// Table: ai_agents
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (not null)
+//   name: text (not null)
+//   description: text (nullable)
+//   system_prompt: text (not null)
+//   gemini_api_key: text (not null)
+//   is_active: boolean (nullable, default: false)
+//   created_at: timestamp with time zone (nullable, default: now())
+//   updated_at: timestamp with time zone (nullable, default: now())
 // Table: audit_log
 //   id: uuid (not null, default: gen_random_uuid())
 //   tabela: character varying (not null)
@@ -1308,6 +1578,15 @@ export const Constants = {
 //   data_consumo: timestamp without time zone (nullable, default: now())
 //   sessoes_consumidas: integer (nullable, default: 1)
 //   data_criacao: timestamp without time zone (nullable, default: now())
+// Table: contact_identity
+//   id: uuid (not null, default: gen_random_uuid())
+//   instance_id: uuid (not null)
+//   user_id: uuid (not null)
+//   canonical_phone: text (nullable)
+//   phone_jid: text (nullable)
+//   lid_jid: text (nullable)
+//   display_name: text (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
 // Table: contratos_cliente
 //   id: uuid (not null, default: gen_random_uuid())
 //   cliente_id: uuid (not null)
@@ -1333,6 +1612,15 @@ export const Constants = {
 //   ativo: boolean (nullable, default: true)
 //   observacoes: text (nullable)
 //   data_criacao: timestamp without time zone (nullable, default: now())
+// Table: import_jobs
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (not null)
+//   type: text (not null)
+//   status: text (nullable, default: 'running'::text)
+//   total_items: integer (nullable, default: 0)
+//   processed_items: integer (nullable, default: 0)
+//   created_at: timestamp with time zone (nullable, default: now())
+//   updated_at: timestamp with time zone (nullable, default: now())
 // Table: pacotes
 //   id: uuid (not null, default: gen_random_uuid())
 //   nome: character varying (not null)
@@ -1443,6 +1731,17 @@ export const Constants = {
 //   user_id: text (nullable)
 //   message: text (nullable)
 //   llm_response: text (nullable)
+// Table: user_integrations
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (not null)
+//   evolution_api_url: text (nullable)
+//   evolution_api_key: text (nullable)
+//   instance_name: text (nullable)
+//   status: text (nullable, default: 'DISCONNECTED'::text)
+//   created_at: timestamp with time zone (nullable, default: now())
+//   updated_at: timestamp with time zone (nullable, default: now())
+//   is_setup_completed: boolean (not null, default: false)
+//   is_webhook_enabled: boolean (not null, default: false)
 // Table: usuarios
 //   id: uuid (not null, default: gen_random_uuid())
 //   email: character varying (not null)
@@ -1482,6 +1781,31 @@ export const Constants = {
 //   receita_planos: numeric (nullable)
 //   receita_pacotes: numeric (nullable)
 //   comissao_profissional: numeric (nullable)
+// Table: whatsapp_contacts
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (not null)
+//   remote_jid: text (not null)
+//   push_name: text (nullable)
+//   profile_picture_url: text (nullable)
+//   last_message_at: timestamp with time zone (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
+//   classification: text (nullable)
+//   score: integer (nullable, default: 0)
+//   ai_analysis_summary: text (nullable)
+//   phone_number: text (nullable)
+//   ai_agent_id: uuid (nullable)
+//   pipeline_stage: text (nullable, default: 'Em Espera'::text)
+// Table: whatsapp_messages
+//   id: uuid (not null, default: gen_random_uuid())
+//   user_id: uuid (not null)
+//   contact_id: uuid (nullable)
+//   message_id: text (not null)
+//   from_me: boolean (nullable, default: false)
+//   text: text (nullable)
+//   type: text (nullable)
+//   timestamp: timestamp with time zone (nullable)
+//   raw: jsonb (nullable)
+//   created_at: timestamp with time zone (nullable, default: now())
 
 // --- CONSTRAINTS ---
 // Table: agendamentos
@@ -1500,6 +1824,9 @@ export const Constants = {
 //   UNIQUE agent_projects_github_repo_key: UNIQUE (github_repo)
 //   PRIMARY KEY agent_projects_pkey: PRIMARY KEY (id)
 //   UNIQUE agent_projects_project_key_key: UNIQUE (project_key)
+// Table: ai_agents
+//   PRIMARY KEY ai_agents_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY ai_agents_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
 // Table: audit_log
 //   CHECK audit_log_acao_check: CHECK (((acao)::text = ANY ((ARRAY['INSERT'::character varying, 'UPDATE'::character varying, 'DELETE'::character varying])::text[])))
 //   PRIMARY KEY audit_log_pkey: PRIMARY KEY (id)
@@ -1511,6 +1838,10 @@ export const Constants = {
 //   FOREIGN KEY consumo_pacote_agendamento_id_fkey: FOREIGN KEY (agendamento_id) REFERENCES agendamentos(id) ON DELETE CASCADE
 //   FOREIGN KEY consumo_pacote_contrato_id_fkey: FOREIGN KEY (contrato_id) REFERENCES contratos_cliente(id) ON DELETE CASCADE
 //   PRIMARY KEY consumo_pacote_pkey: PRIMARY KEY (id)
+// Table: contact_identity
+//   FOREIGN KEY contact_identity_instance_id_fkey: FOREIGN KEY (instance_id) REFERENCES user_integrations(id) ON DELETE CASCADE
+//   PRIMARY KEY contact_identity_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY contact_identity_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
 // Table: contratos_cliente
 //   FOREIGN KEY contratos_cliente_cliente_id_fkey: FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE
 //   FOREIGN KEY contratos_cliente_pacote_id_fkey: FOREIGN KEY (pacote_id) REFERENCES pacotes(id) ON DELETE SET NULL
@@ -1522,6 +1853,9 @@ export const Constants = {
 //   FOREIGN KEY fk_horarios_profissional: FOREIGN KEY (profissional_id) REFERENCES profissionais(id) ON DELETE CASCADE
 //   CHECK horarios_funcionamento_dia_semana_check: CHECK (((dia_semana >= 0) AND (dia_semana <= 6)))
 //   PRIMARY KEY horarios_funcionamento_pkey: PRIMARY KEY (id)
+// Table: import_jobs
+//   PRIMARY KEY import_jobs_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY import_jobs_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
 // Table: pacotes
 //   PRIMARY KEY pacotes_pkey: PRIMARY KEY (id)
 //   CHECK pacotes_quantidade_sessoes_check: CHECK ((quantidade_sessoes > 0))
@@ -1571,11 +1905,25 @@ export const Constants = {
 //   PRIMARY KEY studio_config_pkey: PRIMARY KEY (id)
 // Table: test_webhooks
 //   PRIMARY KEY test_webhooks_pkey: PRIMARY KEY (id)
+// Table: user_integrations
+//   PRIMARY KEY user_integrations_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY user_integrations_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+//   UNIQUE user_integrations_user_id_key: UNIQUE (user_id)
 // Table: usuarios
 //   UNIQUE usuarios_email_key: UNIQUE (email)
 //   PRIMARY KEY usuarios_pkey: PRIMARY KEY (id)
 //   CHECK usuarios_role_check: CHECK (((role)::text = ANY ((ARRAY['admin'::character varying, 'professor'::character varying, 'massoterapeuta'::character varying, 'superuser'::character varying])::text[])))
 //   CHECK usuarios_status_check: CHECK (((status)::text = ANY ((ARRAY['ativo'::character varying, 'inativo'::character varying])::text[])))
+// Table: whatsapp_contacts
+//   FOREIGN KEY whatsapp_contacts_ai_agent_id_fkey: FOREIGN KEY (ai_agent_id) REFERENCES ai_agents(id) ON DELETE SET NULL
+//   PRIMARY KEY whatsapp_contacts_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY whatsapp_contacts_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+//   UNIQUE whatsapp_contacts_user_id_remote_jid_key: UNIQUE (user_id, remote_jid)
+// Table: whatsapp_messages
+//   FOREIGN KEY whatsapp_messages_contact_id_fkey: FOREIGN KEY (contact_id) REFERENCES whatsapp_contacts(id) ON DELETE CASCADE
+//   PRIMARY KEY whatsapp_messages_pkey: PRIMARY KEY (id)
+//   FOREIGN KEY whatsapp_messages_user_id_fkey: FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+//   UNIQUE whatsapp_messages_user_id_message_id_key: UNIQUE (user_id, message_id)
 
 // --- ROW LEVEL SECURITY POLICIES ---
 // Table: agendamentos
@@ -1603,6 +1951,9 @@ export const Constants = {
 //     USING: (auth.uid() IN ( SELECT usuarios.id    FROM usuarios   WHERE ((usuarios.role)::text = ANY ((ARRAY['professor'::character varying, 'massoterapeuta'::character varying])::text[]))))
 //   Policy "professor_update_agendamentos" (UPDATE, PERMISSIVE) roles={public}
 //     USING: (auth.uid() IN ( SELECT usuarios.id    FROM usuarios   WHERE ((usuarios.role)::text = ANY ((ARRAY['professor'::character varying, 'massoterapeuta'::character varying])::text[]))))
+// Table: ai_agents
+//   Policy "Users can manage their own AI agents" (ALL, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = user_id)
 // Table: audit_log
 //   Policy "admin_all_audit" (ALL, PERMISSIVE) roles={public}
 //     USING: ((auth.jwt() ->> 'email'::text) = ANY (ARRAY['tatiane@studio.com'::text, 'aguinel@studio.com'::text]))
@@ -1650,6 +2001,9 @@ export const Constants = {
 //     USING: (auth.uid() IN ( SELECT usuarios.id    FROM usuarios   WHERE ((usuarios.role)::text = ANY ((ARRAY['admin'::character varying, 'superuser'::character varying])::text[]))))
 //   Policy "admin_update_consumo" (UPDATE, PERMISSIVE) roles={public}
 //     USING: (auth.uid() IN ( SELECT usuarios.id    FROM usuarios   WHERE ((usuarios.role)::text = ANY ((ARRAY['admin'::character varying, 'superuser'::character varying])::text[]))))
+// Table: contact_identity
+//   Policy "Users can manage their own contact identities" (ALL, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = user_id)
 // Table: contratos_cliente
 //   Policy "admin_all_contratos" (ALL, PERMISSIVE) roles={public}
 //     USING: ((auth.jwt() ->> 'email'::text) = ANY (ARRAY['tatiane@studio.com'::text, 'aguinel@studio.com'::text]))
@@ -1676,6 +2030,9 @@ export const Constants = {
 //     USING: (auth.uid() IN ( SELECT usuarios.id    FROM usuarios   WHERE ((usuarios.role)::text = ANY ((ARRAY['admin'::character varying, 'superuser'::character varying])::text[]))))
 //   Policy "admin_update_horarios" (UPDATE, PERMISSIVE) roles={public}
 //     USING: (auth.uid() IN ( SELECT usuarios.id    FROM usuarios   WHERE ((usuarios.role)::text = ANY ((ARRAY['admin'::character varying, 'superuser'::character varying])::text[]))))
+// Table: import_jobs
+//   Policy "Users can manage their own import jobs" (ALL, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = user_id)
 // Table: pacotes
 //   Policy "admin_all_pacotes" (ALL, PERMISSIVE) roles={public}
 //     USING: ((auth.jwt() ->> 'email'::text) = ANY (ARRAY['tatiane@studio.com'::text, 'aguinel@studio.com'::text]))
@@ -1759,6 +2116,9 @@ export const Constants = {
 //     WITH CHECK: true
 //   Policy "Allow select" (SELECT, PERMISSIVE) roles={public}
 //     USING: true
+// Table: user_integrations
+//   Policy "Users can manage their own integrations" (ALL, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = user_id)
 // Table: usuarios
 //   Policy "admin_all_usuarios" (ALL, PERMISSIVE) roles={public}
 //     USING: ((auth.jwt() ->> 'email'::text) = ANY (ARRAY['tatiane@studio.com'::text, 'aguinel@studio.com'::text]))
@@ -1770,6 +2130,12 @@ export const Constants = {
 //     USING: (auth.uid() IN ( SELECT usuarios_1.id    FROM usuarios usuarios_1   WHERE ((usuarios_1.role)::text = ANY ((ARRAY['admin'::character varying, 'superuser'::character varying])::text[]))))
 //   Policy "admin_update_usuarios" (UPDATE, PERMISSIVE) roles={public}
 //     USING: (auth.uid() IN ( SELECT usuarios_1.id    FROM usuarios usuarios_1   WHERE ((usuarios_1.role)::text = ANY ((ARRAY['admin'::character varying, 'superuser'::character varying])::text[]))))
+// Table: whatsapp_contacts
+//   Policy "Users can manage their own contacts" (ALL, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = user_id)
+// Table: whatsapp_messages
+//   Policy "Users can manage their own messages" (ALL, PERMISSIVE) roles={public}
+//     USING: (auth.uid() = user_id)
 
 // --- DATABASE FUNCTIONS ---
 // FUNCTION create_new_user(text, text, text, text, text)
@@ -1822,6 +2188,26 @@ export const Constants = {
 //   END;
 //   $function$
 //
+// FUNCTION merge_whatsapp_contacts(uuid, uuid, uuid[])
+//   CREATE OR REPLACE FUNCTION public.merge_whatsapp_contacts(p_user_id uuid, p_primary_contact_id uuid, p_secondary_contact_ids uuid[])
+//    RETURNS void
+//    LANGUAGE plpgsql
+//    SECURITY DEFINER
+//   AS $function$
+//   BEGIN
+//       -- Re-assign messages to the primary contact
+//       UPDATE public.whatsapp_messages
+//       SET contact_id = p_primary_contact_id
+//       WHERE user_id = p_user_id
+//         AND contact_id = ANY(p_secondary_contact_ids);
+//
+//       -- Delete the secondary duplicate contacts
+//       DELETE FROM public.whatsapp_contacts
+//       WHERE user_id = p_user_id
+//         AND id = ANY(p_secondary_contact_ids);
+//   END;
+//   $function$
+//
 
 // --- INDEXES ---
 // Table: agendamentos
@@ -1837,6 +2223,10 @@ export const Constants = {
 //   CREATE UNIQUE INDEX clientes_cpf_key ON public.clientes USING btree (cpf) WHERE (cpf IS NOT NULL)
 // Table: consumo_pacote
 //   CREATE INDEX idx_consumo_pacote_contrato ON public.consumo_pacote USING btree (contrato_id)
+// Table: contact_identity
+//   CREATE UNIQUE INDEX idx_contact_identity_instance_phone ON public.contact_identity USING btree (instance_id, canonical_phone)
+//   CREATE INDEX idx_contact_identity_lid_jid ON public.contact_identity USING btree (lid_jid)
+//   CREATE INDEX idx_contact_identity_phone_jid ON public.contact_identity USING btree (phone_jid)
 // Table: contratos_cliente
 //   CREATE INDEX idx_contratos_cliente ON public.contratos_cliente USING btree (cliente_id)
 //   CREATE INDEX idx_contratos_status ON public.contratos_cliente USING btree (status)
@@ -1852,5 +2242,12 @@ export const Constants = {
 //   CREATE INDEX idx_reposicoes_cliente ON public.reposicoes USING btree (cliente_id)
 //   CREATE INDEX idx_reposicoes_data_limite ON public.reposicoes USING btree (data_limite)
 //   CREATE INDEX idx_reposicoes_status ON public.reposicoes USING btree (status)
+// Table: user_integrations
+//   CREATE UNIQUE INDEX user_integrations_user_id_key ON public.user_integrations USING btree (user_id)
 // Table: usuarios
 //   CREATE UNIQUE INDEX usuarios_email_key ON public.usuarios USING btree (email)
+// Table: whatsapp_contacts
+//   CREATE INDEX whatsapp_contacts_phone_number_idx ON public.whatsapp_contacts USING btree (user_id, phone_number)
+//   CREATE UNIQUE INDEX whatsapp_contacts_user_id_remote_jid_key ON public.whatsapp_contacts USING btree (user_id, remote_jid)
+// Table: whatsapp_messages
+//   CREATE UNIQUE INDEX whatsapp_messages_user_id_message_id_key ON public.whatsapp_messages USING btree (user_id, message_id)

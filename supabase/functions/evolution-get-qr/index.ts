@@ -11,14 +11,6 @@ Deno.serve(async (req: Request) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
-    const evolutionApiUrlRaw = Deno.env.get('EVOLUTION_API_URL') || ''
-    const evolutionApiUrl = evolutionApiUrlRaw.replace(/\/$/, '')
-    const evolutionApiKey = Deno.env.get('EVOLUTION_API_KEY') || ''
-
-    if (!evolutionApiUrl || !evolutionApiKey) {
-      throw new Error('Evolution API is not globally configured.')
-    }
-
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     const { data: integ } = await supabase
@@ -27,6 +19,14 @@ Deno.serve(async (req: Request) => {
       .eq('id', integrationId)
       .single()
     if (!integ) throw new Error('Missing configuration')
+
+    const evolutionApiUrlRaw = integ.evolution_api_url || Deno.env.get('EVOLUTION_API_URL') || ''
+    const evolutionApiUrl = evolutionApiUrlRaw.replace(/\/$/, '')
+    const evolutionApiKey = integ.evolution_api_key || Deno.env.get('EVOLUTION_API_KEY') || ''
+
+    if (!evolutionApiUrl || !evolutionApiKey) {
+      throw new Error('Evolution API is not globally configured.')
+    }
 
     const instanceName = integ.user_id
 
@@ -196,8 +196,16 @@ Deno.serve(async (req: Request) => {
           } as any)
           .eq('id', integrationId)
 
-        if (createData.qrcode && createData.qrcode.base64) {
-          return new Response(JSON.stringify({ base64: createData.qrcode.base64 }), {
+        let base64 = createData.base64 || createData.qrcode?.base64 || createData.qrcode
+        if (typeof base64 === 'object' && base64.base64) {
+          base64 = base64.base64
+        }
+
+        if (base64) {
+          if (typeof base64 === 'string' && !base64.startsWith('data:image')) {
+            base64 = `data:image/png;base64,${base64}`
+          }
+          return new Response(JSON.stringify({ base64 }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           })
         }
@@ -266,11 +274,19 @@ Deno.serve(async (req: Request) => {
       } as any)
       .eq('id', integrationId)
 
-    const base64 = connectData.base64
+    let base64 = connectData.base64 || connectData.qrcode?.base64 || connectData.qrcode
+    if (typeof base64 === 'object' && base64.base64) {
+      base64 = base64.base64
+    }
+
     if (!base64) {
       return new Response(JSON.stringify({ error: 'qr_not_ready_yet' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       })
+    }
+
+    if (typeof base64 === 'string' && !base64.startsWith('data:image')) {
+      base64 = `data:image/png;base64,${base64}`
     }
 
     return new Response(JSON.stringify({ base64 }), {

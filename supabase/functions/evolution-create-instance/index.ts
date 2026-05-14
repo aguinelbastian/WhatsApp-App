@@ -11,14 +11,6 @@ Deno.serve(async (req: Request) => {
 
     const supabaseUrl = Deno.env.get('SUPABASE_URL') || ''
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || ''
-    const evolutionApiUrlRaw = Deno.env.get('EVOLUTION_API_URL') || ''
-    const evolutionApiUrl = evolutionApiUrlRaw.replace(/\/$/, '')
-    const evolutionApiKey = Deno.env.get('EVOLUTION_API_KEY') || ''
-
-    if (!evolutionApiUrl || !evolutionApiKey) {
-      throw new Error('Evolution API is not globally configured.')
-    }
-
     const supabase = createClient(supabaseUrl, supabaseKey)
 
     const { data: integ } = await supabase
@@ -28,6 +20,14 @@ Deno.serve(async (req: Request) => {
       .single()
     if (!integ) {
       throw new Error('Integration not found')
+    }
+
+    const evolutionApiUrlRaw = integ.evolution_api_url || Deno.env.get('EVOLUTION_API_URL') || ''
+    const evolutionApiUrl = evolutionApiUrlRaw.replace(/\/$/, '')
+    const evolutionApiKey = integ.evolution_api_key || Deno.env.get('EVOLUTION_API_KEY') || ''
+
+    if (!evolutionApiUrl || !evolutionApiKey) {
+      throw new Error('Evolution API is not globally configured.')
     }
 
     const instanceName = integ.user_id
