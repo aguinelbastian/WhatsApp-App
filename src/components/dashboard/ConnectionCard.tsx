@@ -73,14 +73,16 @@ export function ConnectionCard() {
     if (!integration || integrationLoading || error) return
 
     if (integration.status === 'DISCONNECTED' || integration.status === 'WAITING_QR') {
-      if (!qrAttempted.current && !qrCode) {
+      if (!qrAttempted.current && !qrCode && !error) {
         qrAttempted.current = true
         fetchQR()
       }
 
-      timerRef.current = setInterval(() => {
-        fetchQR()
-      }, 10000)
+      if (!error) {
+        timerRef.current = setInterval(() => {
+          fetchQR()
+        }, 10000)
+      }
 
       return () => {
         if (timerRef.current) clearInterval(timerRef.current)

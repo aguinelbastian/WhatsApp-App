@@ -17,6 +17,7 @@ export default function Onboarding() {
 
   const [step, setStep] = useState(1)
   const [qrCode, setQrCode] = useState<string | null>(null)
+  const [qrError, setQrError] = useState<string | null>(null)
 
   const [syncStatus, setSyncStatus] = useState<string>('')
   const [progress, setProgress] = useState(0)
@@ -29,6 +30,17 @@ export default function Onboarding() {
       navigate('/app', { replace: true })
     }
   }, [integration?.is_setup_completed, navigate])
+
+  const handleSkipOnboarding = async () => {
+    if (integration?.id) {
+      await supabase
+        .from('user_integrations')
+        .update({ is_setup_completed: true })
+        .eq('id', integration.id)
+      setIntegration({ ...integration, is_setup_completed: true })
+    }
+    navigate('/app', { replace: true })
+  }
 
   useEffect(() => {
     let interval: NodeJS.Timeout
@@ -77,6 +89,13 @@ export default function Onboarding() {
           const { data } = await supabase.functions.invoke('evolution-get-qr', {
             body: { integrationId: currentIntegrationId },
           })
+
+          if (data?.error) {
+            setQrError(data.error)
+          } else {
+            setQrError(null)
+          }
+
           if (data?.base64) {
             setQrCode(data.base64)
             setIntegration((prev: any) => (prev ? { ...prev, status: 'WAITING_QR' } : null))
@@ -85,8 +104,8 @@ export default function Onboarding() {
             setIntegration((prev: any) => (prev ? { ...prev, status: 'CONNECTED' } : null))
             setStep(2)
           }
-        } catch (e) {
-          // Silent catch to prevent console spam
+        } catch (e: any) {
+          setQrError(e.message || 'Erro ao conectar com o serviço de integração.')
         }
       }
       fetchQR()
@@ -231,7 +250,17 @@ export default function Onboarding() {
         <CardContent className="px-10 pb-12">
           {step === 1 && (
             <div className="flex flex-col items-center py-4 space-y-8">
-              {qrCode ? (
+              {qrError ? (
+                <div className="flex flex-col items-center justify-center p-6 bg-red-50 text-red-700 rounded-3xl border border-red-100 text-center max-w-xs space-y-4 animate-in fade-in zoom-in-95 duration-500">
+                  <p className="text-sm font-medium">{qrError}</p>
+                  <button
+                    onClick={handleSkipOnboarding}
+                    className="px-6 py-2.5 bg-red-100 hover:bg-red-200 text-red-800 rounded-full text-sm font-bold transition-all hover:scale-105"
+                  >
+                    Pular configuração por agora
+                  </button>
+                </div>
+              ) : qrCode ? (
                 <div className="p-4 bg-white rounded-3xl shadow-elevation border border-border/40 animate-in fade-in zoom-in-95 duration-500">
                   <img
                     src={qrCode.startsWith('data:') ? qrCode : `data:image/png;base64,${qrCode}`}
@@ -244,9 +273,11 @@ export default function Onboarding() {
                   <Loader2 className="animate-spin h-10 w-10 text-muted-foreground" />
                 </div>
               )}
-              <p className="text-[13px] text-muted-foreground font-medium text-center max-w-xs leading-relaxed">
-                {t('open_whatsapp_scan')}
-              </p>
+              {!qrError && (
+                <p className="text-[13px] text-muted-foreground font-medium text-center max-w-xs leading-relaxed">
+                  {t('open_whatsapp_scan')}
+                </p>
+              )}
             </div>
           )}
 
