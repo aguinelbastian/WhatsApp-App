@@ -27,7 +27,12 @@ Deno.serve(async (req: Request) => {
     const evolutionApiKey = integ.evolution_api_key || Deno.env.get('EVOLUTION_API_KEY') || ''
 
     if (!evolutionApiUrl || !evolutionApiKey) {
-      throw new Error('Evolution API is not globally configured.')
+      return new Response(
+        JSON.stringify({
+          error: 'Evolution API is not globally configured. Please set the API URL and Key.',
+        }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      )
     }
 
     const instanceName = integ.user_id
@@ -108,7 +113,7 @@ Deno.serve(async (req: Request) => {
       return new Response(
         JSON.stringify({ error: `Evolution Create failed (${response.status}): ${text}` }),
         {
-          status: 400,
+          status: 200,
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         },
       )
@@ -149,7 +154,7 @@ Deno.serve(async (req: Request) => {
     })
   } catch (error: any) {
     return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
+      status: 200,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
